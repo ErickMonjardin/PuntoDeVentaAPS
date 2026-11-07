@@ -567,14 +567,20 @@
                     <p:dataTable id="tablaProveedores"
                                  value="#{proveedorBean.listaProveedores}"
                                  var="prov"
+                                 selection="#{proveedorBean.proveedorSeleccionado}"
+                                 selectionMode="single"
+                                 rowKey="#{prov.id}"
                                  emptyMessage="No se encontraron proveedores"
                                  style="margin-top:20px;">
+
+                        <p:ajax event="rowSelect" update=":formInventario:tabsPrincipal:botonesProveedores"/>
+                        <p:ajax event="rowUnselect" update=":formInventario:tabsPrincipal:botonesProveedores"/>
 
                         <p:column headerText="ID Proveedor">
                             <h:outputText value="#{prov.id}"/>
                         </p:column>
 
-                        <p:column headerText="Marca del proveedor">
+                        <p:column headerText="Marca">
                             <h:outputText value="#{prov.marca}"/>
                         </p:column>
 
@@ -585,28 +591,28 @@
                         <p:column headerText="Contacto">
                             <h:outputText value="#{prov.contacto}"/>
                         </p:column>
-
-                        <p:column headerText="Acciones" style="text-align: center;">
-
-                            <p:commandButton value="Modificar"
-                                             action="#{proveedorBean.prepararModificacion(prov)}"
-                                             process="@this" update=":formInventario:tabsPrincipal:panelModificarProv"
-                                             oncomplete="PF('dlgModProv').show()"
-                                             styleClass="btn-green"
-                                             style="margin-right: 5px;"/>
-
-                            <p:commandButton value="Eliminar"
-                                             action="#{proveedorBean.eliminarProveedor(prov)}"
-                                             process="@this"
-                                             update=":formInventario:tabsPrincipal:tablaProveedores :formInventario:growl"
-                                             styleClass="btn-red">
-                                <p:confirm header="Confirmación"
-                                           message="¿Estás seguro de que deseas eliminar permanentemente a este proveedor?
-                                                    Esta accion es irreversible"
-                                           icon="pi pi-exclamation-triangle"/>
-                            </p:commandButton>
-                        </p:column>
                     </p:dataTable>
+                    <h:panelGroup id="botonesProveedores" layout="block" style="text-align: center; margin-top: 15px;">
+                        <p:commandButton value="Eliminar"
+                                         action="#{proveedorBean.eliminarProveedor(proveedorBean.proveedorSeleccionado)}"
+                                         process="@this"
+                                         update=":formInventario:tabsPrincipal:tablaProveedores :formInventario:growl botonesProveedores"
+                                         disabled="#{empty proveedorBean.proveedorSeleccionado}"
+                                         styleClass="btn-red"
+                                         style="margin-right: 10px;">
+                            <p:confirm header="Confirmación"
+                                       message="¿Estás seguro de que deseas eliminar permanentemente a este proveedor? Esta acción es irreversible."
+                                       icon="pi pi-exclamation-triangle"/>
+                        </p:commandButton>
+
+                        <p:commandButton value="Modificar"
+                                         action="#{proveedorBean.prepararModificacion(proveedorBean.proveedorSeleccionado)}"
+                                         process="@this"
+                                         update=":formInventario:tabsPrincipal:panelModificarProv"
+                                         oncomplete="PF('dlgModProv').show()"
+                                         disabled="#{empty proveedorBean.proveedorSeleccionado}"
+                                         styleClass="btn-blue"/>
+                    </h:panelGroup>
 
                     <p:confirmDialog global="true" showEffect="fade" hideEffect="fade"
                                      responsive="true" width="350">
