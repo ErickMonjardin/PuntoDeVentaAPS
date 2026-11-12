@@ -689,7 +689,13 @@
                                  value="#{usuarioBean.listaUsuarios}"
                                  var="user"
                                  emptyMessage="No se encontraron usuarios"
-                                 style="margin-top:20px;">
+                                 style="margin-top:20px;"
+                                selection="#{usuarioBean.usuarioSeleccionado}"
+                                selectionMode="single"
+                                rowKey="#{user.id}">
+
+                        <p:ajax event="rowSelect" update=":formInventario:tabsPrincipal:botonesUsuarios"/>
+                        <p:ajax event="rowUnselect" update=":formInventario:tabsPrincipal:botonesUsuarios"/>
 
                         <p:column headerText="ID Usuario">
                             <h:outputText value="#{user.id}"/>
@@ -706,28 +712,27 @@
                         <p:column headerText="Rol de usuario">
                             <h:outputText value="#{user.rol}"/>
                         </p:column>
-
-                        <p:column headerText="Acciones" style="text-align: center;">
-                            <p:commandButton value="Modificar"
-                                             action="#{usuarioBean.prepararModificacion(user)}"
-                                             process="@this"
-                                             update=":formInventario:tabsPrincipal:panelModificarUser"
-                                             oncomplete="PF('dlgModUser').show()"
-                                             styleClass="btn-green"
-                                             style="margin-right: 5px;"/>
-
-                            <p:commandButton value="Eliminar"
-                                             action="#{usuarioBean.eliminarUsuario(user)}"
-                                             process="@this"
-                                             update=":formInventario:tabsPrincipal:tablaUsuarios :formInventario:growl"
-                                             styleClass="btn-red">
-                                <p:confirm header="Confirmación"
-                                           message="¿Estás seguro de que deseas eliminar permanentemente a este usuario?
-                                                    Esta accion es irreversible"
-                                           icon="pi pi-exclamation-triangle"/>
-                            </p:commandButton>
-                        </p:column>
                     </p:dataTable>
+                    <h:panelGroup id="botonesUsuarios" layout="block" style="text-align: center; margin-top: 15px;">
+                        <p:commandButton value="Eliminar"
+                                        action="#{usuarioBean.eliminarUsuario(usuarioBean.usuarioSeleccionado)}"
+                                        process="@this"
+                                        update=":formInventario:tabsPrincipal:tablaUsuarios :formInventario:growl botonesUsuarios"
+                                         disabled="#{empty usuarioBean.usuarioSeleccionado}"
+                                         styleClass="btn-red"
+                                         style="margin-right: 10px;">
+                            <p:confirm header="Confirmación"
+                                       message="¿Estás seguro de que deseas eliminar permanentemente a este usuario? Esta acción es irreversible"
+                                       icon="pi pi-exclamation-triangle"/>
+                        </p:commandButton>
+                        <p:commandButton value="Modificar"
+                                         action="#{usuarioBean.prepararModificacion(usuarioBean.usuarioSeleccionado)}"
+                                         process="@this"
+                                         update=":formInventario:tabsPrincipal:panelModificarUser"
+                                         oncomplete="PF('dlgModUser').show()"
+                                         disabled="#{empty usuarioBean.usuarioSeleccionado}"
+                                         styleClass="btn-blue"/>
+                    </h:panelGroup>
 
                     <p:confirmDialog global="true" showEffect="fade" hideEffect="fade"
                                      responsive="true" width="350">
